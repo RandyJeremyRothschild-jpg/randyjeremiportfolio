@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Palette Engine</title>
+<style>
+  html, body { margin: 0; height: 100%; font-family: ui-monospace, Consolas, monospace; background: #080711; }
+  .row { display: flex; height: 100%; }
+  .col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 10px; padding-bottom: 70px; transition: background .5s; cursor: pointer; }
+  .hex { font-size: clamp(12px, 2vw, 20px); font-weight: 700; letter-spacing: .05em; padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,.2); }
+  .lock { border: 0; background: rgba(0,0,0,.2); color: inherit; border-radius: 99px; padding: 6px 12px; font: inherit; cursor: pointer; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #080711; color: #f5f3ef; font-size: 12px; }
+  .bar button { background: #19ff32; border: 0; border-radius: 99px; padding: 8px 16px; font: inherit; font-weight: 700; cursor: pointer; }
+  @media (max-width: 600px) { .row { flex-direction: column; } .col { padding-bottom: 0; flex-direction: row; justify-content: center; } }
+</style>
+</head>
+<body>
+<div class="row" id="r"></div>
+<div class="bar"><span id="msg">SPACE = new palette · click swatch = copy</span><button id="g">GENERATE</button></div>
+<script>
+  const r = document.getElementById('r'), msg = document.getElementById('msg');
+  const cols = Array.from({ length: 5 }, () => ({ h: 0, s: 0, l: 0, locked: false }));
+  const hex = ({ h, s, l }) => { s /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l), f = n => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)); return '#' + [f(0), f(8), f(4)].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('').toUpperCase(); };
+  function gen() {
+    const base = Math.random() * 360, mode = Math.floor(Math.random() * 3);
+    cols.forEach((c, i) => { if (c.locked) return; const off = [i * 30, i * 72, (i % 2) * 180 + i * 12][mode]; c.h = (base + off) % 360; c.s = 55 + Math.random() * 40; c.l = 18 + i * 14 + Math.random() * 8; });
+    render();
+  }
+  function render() {
+    r.innerHTML = '';
+    cols.forEach(c => {
+      const h = hex(c), d = document.createElement('div'); d.className = 'col'; d.style.background = h; d.style.color = c.l > 55 ? '#080711' : '#f5f3ef';
+      d.innerHTML = `<span class="hex">${h}</span><button class="lock">${c.locked ? 'LOCKED' : 'LOCK'}</button>`;
+      d.onclick = e => { if (e.target.classList.contains('lock')) { c.locked = !c.locked; render(); return; } navigator.clipboard?.writeText(h).then(() => { msg.textContent = 'Copied ' + h; setTimeout(() => msg.textContent = 'SPACE = new palette · click swatch = copy', 1200); }); };
+      r.appendChild(d);
+    });
+  }
+  document.getElementById('g').onclick = gen;
+  addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); gen(); } });
+  gen();
+</script>
+</body>
+</html>

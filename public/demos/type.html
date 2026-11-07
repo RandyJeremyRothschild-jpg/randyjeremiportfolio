@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Type Machine</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #080711; color: #f5f3ef; overflow: hidden; font-family: "Arial Black", Impact, sans-serif; }
+  body.light { background: #e8ff2a; color: #080711; }
+  .stage { position: absolute; inset: 0; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; padding: 4vw; }
+  .ch { display: inline-block; font-size: min(18vw, 22vh); line-height: .9; text-transform: uppercase; will-change: transform; transition: color .3s; user-select: none; }
+  .ch.hot { color: #19ff32; }
+  body.light .ch.hot { color: #9b5cff; }
+  .bar { position: fixed; left: 12px; right: 12px; bottom: 12px; display: flex; gap: 8px; font-family: ui-monospace, Consolas, monospace; }
+  input { flex: 1; background: rgba(245,243,239,.08); border: 1px solid rgba(245,243,239,.25); color: inherit; padding: 10px 12px; font: inherit; border-radius: 8px; outline: none; }
+  body.light input { background: rgba(8,7,17,.08); border-color: rgba(8,7,17,.3); }
+  button { background: #19ff32; color: #080711; border: 0; border-radius: 8px; padding: 0 14px; font: inherit; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="stage" id="s"></div>
+<div class="bar"><input id="t" value="Make it loud" maxlength="24" aria-label="Text" /><button id="m">MODE</button></div>
+<script>
+  const s = document.getElementById('s'), t = document.getElementById('t');
+  let px = -999, py = -999, chars = [];
+  function build() {
+    s.innerHTML = ''; chars = [];
+    [...t.value].forEach(ch => { const e = document.createElement('span'); e.className = 'ch'; e.textContent = ch === ' ' ? ' ' : ch; s.appendChild(e); chars.push({ e, x: 0, y: 0, r: 0, s: 1 }); });
+  }
+  build(); t.addEventListener('input', build);
+  document.getElementById('m').onclick = () => document.body.classList.toggle('light');
+  addEventListener('pointermove', e => { px = e.clientX; py = e.clientY; });
+  addEventListener('pointerleave', () => { px = py = -999; });
+  (function loop() {
+    chars.forEach(c => {
+      const b = c.e.getBoundingClientRect(); const cx = b.left + b.width / 2 - c.x, cy = b.top + b.height / 2 - c.y;
+      const dx = px - cx, dy = py - cy, d = Math.hypot(dx, dy), f = Math.max(0, 1 - d / 260);
+      const tx = -dx * f * .35, ty = -dy * f * .35, tr = dx * f * .08, ts = 1 + f * .45;
+      c.x += (tx - c.x) * .15; c.y += (ty - c.y) * .15; c.r += (tr - c.r) * .15; c.s += (ts - c.s) * .15;
+      c.e.style.transform = `translate(${c.x}px,${c.y}px) rotate(${c.r}deg) scale(${c.s},${2 - c.s})`;
+      c.e.classList.toggle('hot', f > .25);
+    });
+    requestAnimationFrame(loop);
+  })();
+</script>
+</body>
+</html>

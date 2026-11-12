@@ -28,7 +28,7 @@ export const site = {
   availableForWork: true,
   availability: "Open to freelance & collaborations",
 
-  url: "https://randyjeremyrothschild-jpg.github.io/randyjeremi-sportfolio",
+  url: "https://randyjeremyrothschild-jpg.github.io/randyjeremiportfolio",
 
   hero: {
     headline: ["Designing with clarity.", "Building with curiosity."],

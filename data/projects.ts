@@ -376,7 +376,7 @@ export const projects: Project[] = [
     gallery: [img("vc-spray-playground", "thumb"), img("vc-spray-playground", "01")],
     description: "A browser spray-paint toy: drag to tag the wall, switch caps and colours, watch the paint drip.",
     tools: ["Canvas 2D", "JavaScript", "AI-assisted"],
-    links: { live: demo("spray.html"), github: "https://github.com/RandyJeremyRothschild-jpg/randyjeremi-sportfolio" },
+    links: { live: demo("spray.html"), github: "https://github.com/RandyJeremyRothschild-jpg/randyjeremiportfolio" },
     featured: true,
     details: {
       kind: "web-development",
@@ -465,7 +465,7 @@ export const projects: Project[] = [
     gallery: [img("vc-this-portfolio", "thumb"), img("vc-this-portfolio", "01")],
     description: "The site you're on — a clean, interactive portfolio with a 3D art exhibition, built with Next.js, Three.js and GSAP.",
     tools: ["Next.js", "Three.js", "GSAP", "Motion"],
-    links: { live: `${BASE_PATH}/`, github: "https://github.com/RandyJeremyRothschild-jpg/randyjeremi-sportfolio" },
+    links: { live: `${BASE_PATH}/`, github: "https://github.com/RandyJeremyRothschild-jpg/randyjeremiportfolio" },
     details: {
       kind: "web-development",
       overview: "A portfolio designed and built end-to-end as a single creative piece.",

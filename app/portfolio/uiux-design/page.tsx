@@ -3,7 +3,7 @@ import UiuxView from "@/components/categories/UiuxView";
 
 export const metadata: Metadata = {
   title: "UI/UX Design",
-  description: "Website UI, mobile apps, dashboards, design systems and prototypes.",
+  description: "Website UI, mobile applications, dashboards, user experience design, design systems and interactive prototypes.",
 };
 
 export default function Page() {

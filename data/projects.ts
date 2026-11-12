@@ -362,11 +362,11 @@ export const projects: Project[] = [
     },
   },
 
-  // ───────────────────────── VIBE CODING ─────────────────────────
+  // ───────────────────────── WEB DEVELOPMENT ─────────────────────────
   {
     id: "vc-spray-playground",
     title: "Spray Playground",
-    category: "vibe-coding",
+    category: "web-development",
     type: "Experimental Web",
     year: 2026,
     client: "Personal project",
@@ -379,7 +379,7 @@ export const projects: Project[] = [
     links: { live: demo("spray.html"), github: "https://github.com/RandyJeremyRothschild-jpg/randyjeremi-sportfolio" },
     featured: true,
     details: {
-      kind: "vibe-coding",
+      kind: "web-development",
       overview: "A tiny interactive experiment that turns the cursor into a spray can.",
       concept: "Bring the feeling of a street wall into the browser with nothing but a canvas and a few rules for drips.",
       features: ["Pressure-like spray density", "Random drips", "Colour palette", "Clear wall"],
@@ -389,7 +389,7 @@ export const projects: Project[] = [
   {
     id: "vc-type-machine",
     title: "Type Machine",
-    category: "vibe-coding",
+    category: "web-development",
     type: "Interactive Website",
     year: 2025,
     client: "Personal project",
@@ -402,7 +402,7 @@ export const projects: Project[] = [
     links: { live: demo("type.html") },
     featured: true,
     details: {
-      kind: "vibe-coding",
+      kind: "web-development",
       overview: "Type is the interface: write a word and play with it.",
       concept: "Each letter is its own element with physics-like responses to the pointer.",
       features: ["Live text input", "Pointer-reactive letters", "Colour modes"],
@@ -412,7 +412,7 @@ export const projects: Project[] = [
   {
     id: "vc-palette-engine",
     title: "Palette Engine",
-    category: "vibe-coding",
+    category: "web-development",
     type: "Web Application",
     year: 2025,
     client: "Personal project",
@@ -424,7 +424,7 @@ export const projects: Project[] = [
     tools: ["JavaScript", "CSS", "AI-assisted"],
     links: { live: demo("palette.html") },
     details: {
-      kind: "vibe-coding",
+      kind: "web-development",
       overview: "A design utility built in an afternoon with AI-assisted coding.",
       concept: "Press space, get a palette. Lock what you like, keep rolling the rest.",
       features: ["Random harmonious palettes", "Lock colours", "Click to copy hex", "Keyboard shortcuts"],
@@ -434,7 +434,7 @@ export const projects: Project[] = [
   {
     id: "vc-orbit-launch",
     title: "Orbit Launch Page",
-    category: "vibe-coding",
+    category: "web-development",
     type: "Landing Page",
     year: 2026,
     client: "Concept project",
@@ -445,7 +445,7 @@ export const projects: Project[] = [
     description: "A product launch landing page with scroll-driven storytelling and a 3D hero.",
     tools: ["Next.js", "Three.js", "GSAP"],
     details: {
-      kind: "vibe-coding",
+      kind: "web-development",
       overview: "A landing page concept where the product reveals itself as you scroll.",
       concept: "Scroll as a timeline — each section advances the 3D object's story.",
       features: ["Pinned scroll scenes", "3D hero object", "Responsive layouts"],
@@ -455,7 +455,7 @@ export const projects: Project[] = [
   {
     id: "vc-this-portfolio",
     title: "This Portfolio",
-    category: "vibe-coding",
+    category: "web-development",
     type: "Personal Website",
     year: 2026,
     client: "Personal project",
@@ -463,14 +463,14 @@ export const projects: Project[] = [
     thumbnail: img("vc-this-portfolio", "thumb"),
     ratio: 1.6,
     gallery: [img("vc-this-portfolio", "thumb"), img("vc-this-portfolio", "01")],
-    description: "The site you're on — a street-art exhibition built with Next.js, Three.js and GSAP.",
+    description: "The site you're on — a clean, interactive portfolio with a 3D art exhibition, built with Next.js, Three.js and GSAP.",
     tools: ["Next.js", "Three.js", "GSAP", "Motion"],
     links: { live: `${BASE_PATH}/`, github: "https://github.com/RandyJeremyRothschild-jpg/randyjeremi-sportfolio" },
     details: {
-      kind: "vibe-coding",
+      kind: "web-development",
       overview: "A portfolio designed and built end-to-end as a single creative piece.",
-      concept: "An interactive digital exhibition: street-art energy, studio polish, experimental tech.",
-      features: ["3D hero and gallery wall", "Pinned horizontal works", "Centralised content data", "WebGL fallbacks"],
+      concept: "A digital portfolio where design meets technology: editorial layouts, a signature 3D object and a walkable exhibition.",
+      features: ["Interactive 3D hero object", "Walkable 3D art exhibition", "Centralised content data", "WebGL fallbacks"],
       technologies: ["Next.js App Router", "TypeScript", "React Three Fiber", "GSAP", "Motion", "Tailwind CSS"],
     },
   },

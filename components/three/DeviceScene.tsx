@@ -18,7 +18,7 @@ function Phone({ screen, position, rotation }: { screen: string; position: [numb
   return (
     <group position={position} rotation={rotation}>
       <RoundedBox args={[w, h, 0.1]} radius={0.14} smoothness={6}>
-        <meshStandardMaterial color="#1a1726" metalness={0.8} roughness={0.25} />
+        <meshStandardMaterial color="#17191C" metalness={0.8} roughness={0.25} />
       </RoundedBox>
       <mesh position-z={0.052}>
         <planeGeometry args={[w - 0.1, h - 0.1]} />
@@ -38,7 +38,7 @@ function Monitor({ screen, position, rotation }: { screen: string; position: [nu
   return (
     <group position={position} rotation={rotation}>
       <RoundedBox args={[w + 0.14, h + 0.14, 0.1]} radius={0.06}>
-        <meshStandardMaterial color="#1a1726" metalness={0.8} roughness={0.25} />
+        <meshStandardMaterial color="#17191C" metalness={0.8} roughness={0.25} />
       </RoundedBox>
       <mesh position-z={0.052}>
         <planeGeometry args={[w, h]} />
@@ -93,7 +93,7 @@ export default function DeviceScene({
     >
       <ambientLight intensity={0.6} />
       <directionalLight position={[3, 3, 5]} intensity={1.8} />
-      <pointLight position={[-4, 0, 2]} intensity={14} color={COLORS.violet} />
+      <pointLight position={[-4, 0, 2]} intensity={10} color={COLORS.sky} />
       <Suspense fallback={null}>
         <Rig>
           <Float speed={1.2} floatIntensity={0.6} rotationIntensity={0.2}>
@@ -109,7 +109,7 @@ export default function DeviceScene({
           )}
         </Rig>
       </Suspense>
-      <Studio intensity={0.7} />
+      <Studio intensity={0.8} />
     </SceneCanvas>
   );
 }

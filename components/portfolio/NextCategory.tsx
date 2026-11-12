@@ -3,28 +3,31 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { categories } from "@/data/categories";
 import type { CategorySlug } from "@/data/types";
 
-/** Bottom-of-page navigation to the next discipline + back to archive. */
+/** Bottom-of-page navigation to the next discipline + back to the archive. */
 export default function NextCategory({ current }: { current: CategorySlug }) {
   const i = categories.findIndex((c) => c.slug === current);
   const next = categories[(i + 1) % categories.length];
   return (
-    <section className="px-4 pb-20 pt-10 md:px-8">
-      <div className="mx-auto max-w-[1600px]">
-        <Link href="/portfolio" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted hover:text-bone">
-          <ArrowLeft className="h-4 w-4" /> Back to the archive
+    <section className="pb-24 pt-8 md:pb-32">
+      <div className="wrap">
+        <Link href="/portfolio" className="label inline-flex items-center gap-2 text-ink">
+          <ArrowLeft className="h-3.5 w-3.5" /> <span className="u-link">Back to the archive</span>
         </Link>
         <Link
           href={next.href}
           data-cursor="Next"
-          className="group relative mt-6 block overflow-hidden rounded-[1.5rem] p-8 md:p-14"
-          style={{ background: next.accent, color: next.onAccent }}
+          className="group mt-6 flex items-center justify-between gap-6 border-y border-ink/15 py-8 transition-[padding] duration-500 ease-[var(--ease-expo)] hover:px-4 md:py-12"
         >
-          <span className="font-mono text-xs uppercase tracking-widest">Next room — {next.index}</span>
-          <span className="mt-4 flex items-end justify-between gap-6">
-            <span className="font-display text-[12vw] uppercase leading-[0.85] md:text-[8vw]">{next.shortTitle}</span>
-            <ArrowUpRight className="h-16 w-16 shrink-0 transition-transform duration-500 group-hover:rotate-45 md:h-28 md:w-28" />
+          <span>
+            <span className="label block">Next discipline — {next.index}</span>
+            <span className="mt-3 block font-display text-[clamp(2rem,7vw,6rem)] font-medium uppercase leading-none tracking-[-0.035em]">
+              {next.title}
+            </span>
+            <span className="mt-3 block max-w-md text-sm text-muted">{next.tagline}</span>
           </span>
-          <span className="mt-2 block max-w-md opacity-80">{next.tagline}</span>
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-paper transition-all duration-500 ease-[var(--ease-expo)] group-hover:rotate-45 group-hover:bg-lime group-hover:text-ink md:h-20 md:w-20">
+            <ArrowUpRight className="h-6 w-6 md:h-8 md:w-8" />
+          </span>
         </Link>
       </div>
     </section>

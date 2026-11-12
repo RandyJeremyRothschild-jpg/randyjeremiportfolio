@@ -1,33 +1,37 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, ChevronLeft, ChevronRight, ExternalLink, Monitor, Smartphone, X } from "lucide-react";
-import type { GraphicDetails, Project, UiuxDetails, VibeDetails } from "@/data/types";
+import { ArrowUpRight, ChevronLeft, ChevronRight, ExternalLink, Play, X } from "lucide-react";
+import type { GraphicDetails, Project, UiuxDetails, WebDetails } from "@/data/types";
 import { getCategory } from "@/data/categories";
 import { lockScroll } from "@/lib/scroll";
 import { cn, pad } from "@/lib/utils";
 import { GithubIcon } from "@/components/ui/SocialIcons";
+import Button from "@/components/ui/Button";
 
-function Block({ n, title, children, accent }: { n: string; title: string; children: React.ReactNode; accent: string }) {
+// ── Building blocks ─────────────────────────────────────────────────────────
+function Block({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="grid gap-4 border-t border-bone/10 py-8 md:grid-cols-12">
+    <section className="grid gap-4 border-t border-line py-8 md:grid-cols-12 md:py-10">
       <div className="md:col-span-4">
-        <p className="font-mono text-xs" style={{ color: accent }}>
-          {n}
-        </p>
-        <h3 className="mt-1 font-display text-2xl uppercase leading-none md:text-3xl">{title}</h3>
+        <p className="label">{n}</p>
+        <h3 className="mt-2 font-display text-xl font-medium tracking-[-0.02em] md:text-2xl">{title}</h3>
       </div>
-      <div className="text-bone/80 md:col-span-8">{children}</div>
+      <div className="leading-relaxed text-ink/80 md:col-span-8">{children}</div>
     </section>
   );
 }
 
-function List({ items, accent }: { items: string[]; accent: string }) {
+function List({ items, ordered }: { items: string[]; ordered?: boolean }) {
   return (
-    <ul className="space-y-2">
-      {items.map((t) => (
-        <li key={t} className="flex gap-3">
-          <span className="mt-2 h-2 w-2 shrink-0 rotate-45" style={{ background: accent }} />
+    <ul className="space-y-2.5">
+      {items.map((t, i) => (
+        <li key={t} className="flex gap-4">
+          {ordered ? (
+            <span className="label w-5 shrink-0 pt-1 text-ink">{pad(i + 1)}</span>
+          ) : (
+            <span className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-lime ring-1 ring-ink/30" />
+          )}
           <span>{t}</span>
         </li>
       ))}
@@ -37,154 +41,201 @@ function List({ items, accent }: { items: string[]; accent: string }) {
 
 function Img({ src, alt, className }: { src: string; alt: string; className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} loading="lazy" className={cn("block h-auto w-full", className)} />;
+  return <img src={src} alt={alt} loading="lazy" className={cn("block h-auto", !className?.includes("w-auto") && "w-full", className)} />;
 }
 
-function GraphicBody({ p, d, accent }: { p: Project; d: GraphicDetails; accent: string }) {
+// ── Graphic design ──────────────────────────────────────────────────────────
+function GraphicBody({ p, d }: { p: Project; d: GraphicDetails }) {
   return (
     <>
-      <Block n="01" title="Overview" accent={accent}>
-        <p className="text-lg leading-relaxed">{d.overview}</p>
+      {/* artwork first */}
+      <figure className="mb-10 overflow-hidden rounded-sm bg-soft">
+        <Img src={p.gallery[0] ?? p.thumbnail} alt={`${p.title} — key visual`} className="mx-auto max-h-[80vh] w-auto max-w-full" />
+      </figure>
+      <Block n="01" title="Project overview">
+        <p className="text-lg leading-relaxed text-ink">{p.description}</p>
       </Block>
-      <Block n="02" title="Design objectives" accent={accent}>
-        <List items={d.objectives} accent={accent} />
+      <Block n="02" title="Creative brief">
+        <p>{d.overview}</p>
       </Block>
-      <div className="grid gap-4 py-4 md:grid-cols-2">
-        {p.gallery.map((src, i) => (
-          <figure key={src} className={cn("overflow-hidden bg-plum", i === 0 && "md:col-span-2")}>
-            <Img src={src} alt={`${p.title} — image ${i + 1}`} />
-          </figure>
-        ))}
-      </div>
-      <Block n="03" title="Creative process" accent={accent}>
-        <ol className="space-y-3">
-          {d.process.map((t, i) => (
-            <li key={t} className="flex gap-4">
-              <span className="font-condensed text-2xl leading-none" style={{ color: accent }}>
-                {pad(i + 1)}
-              </span>
-              <span>{t}</span>
-            </li>
-          ))}
-        </ol>
+      <Block n="03" title="Design objectives">
+        <List items={d.objectives} />
       </Block>
-      <Block n="04" title="Design outcomes" accent={accent}>
-        <List items={d.outcomes} accent={accent} />
+      <Block n="04" title="Creative direction">
+        <List items={d.process} ordered />
+      </Block>
+      {p.gallery.length > 1 && (
+        <Block n="05" title="Visual exploration">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {p.gallery.slice(1).map((src, i) => (
+              <figure key={src} className={cn("overflow-hidden rounded-sm bg-soft", p.gallery.length === 2 && "sm:col-span-2")}>
+                <Img src={src} alt={`${p.title} — exploration ${i + 1}`} />
+              </figure>
+            ))}
+          </div>
+        </Block>
+      )}
+      <Block n={p.gallery.length > 1 ? "06" : "05"} title="Final results">
+        <List items={d.outcomes} />
       </Block>
     </>
   );
 }
 
-function UiuxBody({ p, d, accent }: { p: Project; d: UiuxDetails; accent: string }) {
+// ── UI/UX design ────────────────────────────────────────────────────────────
+function UiuxBody({ p, d }: { p: Project; d: UiuxDetails }) {
   const [screen, setScreen] = useState(0);
   const phone = d.device === "phone";
   return (
     <>
-      <Block n="01" title="Project overview" accent={accent}>
-        <p className="text-lg leading-relaxed">{d.overview}</p>
+      <Block n="01" title="Overview">
+        <p className="text-lg leading-relaxed text-ink">{d.overview}</p>
       </Block>
-      <Block n="02" title="Problem statement" accent={accent}>
-        <p className="border-l-4 pl-4 font-grotesk text-xl leading-snug text-bone" style={{ borderColor: accent }}>
-          {d.problem}
-        </p>
+      <Block n="02" title="Problem statement">
+        <p className="border-l-2 border-ink pl-5 font-display text-xl leading-snug tracking-[-0.01em] text-ink">{d.problem}</p>
       </Block>
-      <Block n="03" title="Design objectives" accent={accent}>
-        <List items={d.objectives} accent={accent} />
+      <Block n="03" title="Design objectives">
+        <List items={d.objectives} />
       </Block>
-      <Block n="04" title="Research & discovery" accent={accent}>
+      <Block n="04" title="User research">
         <div className="grid gap-3 sm:grid-cols-3">
           {d.research.map((t, i) => (
-            <div key={t} className="rounded-xl border border-bone/10 bg-bone/[0.03] p-4">
-              <span className="font-mono text-xs text-muted">R{i + 1}</span>
+            <div key={t} className="rounded-sm border border-line bg-surface p-4">
+              <span className="label">R{i + 1}</span>
               <p className="mt-2 text-sm">{t}</p>
             </div>
           ))}
         </div>
       </Block>
-      <Block n="05" title="User flow" accent={accent}>
-        <div className="flex flex-wrap items-center gap-2">
+      <Block n="05" title="User flow">
+        <ol className="flex flex-wrap items-center gap-2">
           {d.userFlow.map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
+            <li key={s} className="flex items-center gap-2">
               <span
-                className={cn("rounded-full border px-4 py-2 font-grotesk text-sm font-medium", i === 0 || i === d.userFlow.length - 1 ? "text-ink" : "border-bone/30")}
-                style={i === 0 || i === d.userFlow.length - 1 ? { background: accent, borderColor: accent } : undefined}
+                className={cn(
+                  "rounded-full border px-4 py-2 font-ui text-sm font-medium",
+                  i === 0 || i === d.userFlow.length - 1 ? "border-ink bg-ink text-paper" : "border-ink/15 bg-surface",
+                )}
               >
+                <span className="mr-2 font-mono text-[10px] opacity-60">{pad(i + 1)}</span>
                 {s}
               </span>
-              {i < d.userFlow.length - 1 && <span className="font-mono text-muted">→</span>}
-            </div>
+              {i < d.userFlow.length - 1 && <span className="font-mono text-muted" aria-hidden>→</span>}
+            </li>
           ))}
-        </div>
+        </ol>
       </Block>
-      <Block n="06" title="Wireframes" accent={accent}>
+      <Block n="06" title="Wireframes">
         <div className={cn("grid gap-3", phone ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2")}>
           {d.wireframes.map((src, i) => (
-            <figure key={src} className="overflow-hidden rounded-lg">
+            <figure key={src} className="overflow-hidden rounded-sm border border-line">
               <Img src={src} alt={`${p.title} wireframe ${i + 1}`} />
             </figure>
           ))}
         </div>
       </Block>
-      <Block n="07" title="UI design" accent={accent}>
-        <div className="flex flex-col items-center gap-4 rounded-2xl bg-plum p-6 md:p-10">
-          <div className={cn("relative overflow-hidden border-[6px] border-[#1a1726] bg-ink shadow-2xl", phone ? "w-[220px] rounded-[2rem]" : "w-full rounded-xl")}>
+      <Block n="07" title="UI design">
+        <div className="grid-paper flex flex-col items-center gap-5 rounded-sm bg-soft p-6 md:p-10">
+          <div
+            className={cn(
+              "relative overflow-hidden bg-ink shadow-[0_30px_60px_-24px_rgb(23_25_28/0.5)] ring-[6px] ring-ink",
+              phone ? "w-[230px] rounded-[2rem]" : "w-full rounded-lg",
+            )}
+          >
             <AnimatePresence mode="wait">
-              <motion.div key={screen} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.35 }}>
+              <motion.div key={screen} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.3 }}>
                 <Img src={d.screens[screen]} alt={`${p.title} screen ${screen + 1}`} />
               </motion.div>
             </AnimatePresence>
           </div>
-          <div className="flex items-center gap-3">
-            <button type="button" aria-label="Previous screen" className="grid h-10 w-10 place-items-center rounded-full border border-bone/20 hover:bg-bone/10" onClick={() => setScreen((s) => (s - 1 + d.screens.length) % d.screens.length)}>
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <span className="font-mono text-xs">
-              {pad(screen + 1)} / {pad(d.screens.length)}
-            </span>
-            <button type="button" aria-label="Next screen" className="grid h-10 w-10 place-items-center rounded-full border border-bone/20 hover:bg-bone/10" onClick={() => setScreen((s) => (s + 1) % d.screens.length)}>
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
+          {d.screens.length > 1 && (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                aria-label="Previous screen"
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-surface hover:border-ink/40"
+                onClick={() => setScreen((s) => (s - 1 + d.screens.length) % d.screens.length)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <span className="label text-ink">
+                {pad(screen + 1)} / {pad(d.screens.length)}
+              </span>
+              <button
+                type="button"
+                aria-label="Next screen"
+                className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-surface hover:border-ink/40"
+                onClick={() => setScreen((s) => (s + 1) % d.screens.length)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
       </Block>
-      <Block n="08" title="Prototype" accent={accent}>
+      <Block n="08" title="Prototype">
         {d.prototypeUrl ? (
-          <a href={d.prototypeUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full px-5 py-3 font-bold text-ink" style={{ background: accent }}>
-            Open interactive prototype <ArrowUpRight className="h-4 w-4" />
-          </a>
+          <Button href={d.prototypeUrl}>Open interactive prototype</Button>
         ) : (
-          <p className="flex items-center gap-2 text-sm text-muted">
-            {phone ? <Smartphone className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
-            Add a Figma / Protopie link via <code className="text-bone">prototypeUrl</code> in data/projects.ts to embed it here.
+          <p className="label normal-case tracking-normal">
+            Prototype link not published yet — add <code className="text-ink">prototypeUrl</code> to this project in data/projects.ts.
           </p>
         )}
       </Block>
-      <Block n="09" title="Final results" accent={accent}>
-        <List items={d.results} accent={accent} />
+      <Block n="09" title="Final outcome">
+        <List items={d.results} />
       </Block>
     </>
   );
 }
 
-function VibeBody({ p, d, accent }: { p: Project; d: VibeDetails; accent: string }) {
+// ── Web development ─────────────────────────────────────────────────────────
+function WebBody({ p, d }: { p: Project; d: WebDetails }) {
   const live = p.links?.live;
   const [loadPreview, setLoadPreview] = useState(false);
+  let n = 0;
+  const next = () => pad(++n);
   return (
     <>
-      <Block n="01" title="Project overview" accent={accent}>
-        <p className="text-lg leading-relaxed">{d.overview}</p>
+      <Block n={next()} title="Project overview">
+        <p className="text-lg leading-relaxed text-ink">{d.overview}</p>
       </Block>
-      <Block n="02" title="Live preview" accent={accent}>
-        <div className="overflow-hidden rounded-xl border border-bone/15 bg-[#0b0918]">
-          <div className="flex items-center gap-2 border-b border-bone/10 px-4 py-2.5">
-            <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-            <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-            <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-            <span className="ml-3 truncate rounded-md bg-bone/5 px-3 py-1 font-mono text-xs text-muted">{live ?? "preview.local"}</span>
+      <Block n={next()} title="Creative concept">
+        <p className="font-display text-xl leading-snug tracking-[-0.01em] text-ink">{d.concept}</p>
+      </Block>
+      <Block n={next()} title="Technologies used">
+        <div className="flex flex-wrap gap-2">
+          {d.technologies.map((t) => (
+            <span key={t} className="rounded-sm border border-line bg-surface px-3 py-1.5 font-mono text-xs">
+              {t}
+            </span>
+          ))}
+        </div>
+      </Block>
+      <Block n={next()} title="Main features">
+        <List items={d.features} />
+      </Block>
+      {d.process && d.process.length > 0 && (
+        <Block n={next()} title="Development process">
+          <List items={d.process} ordered />
+        </Block>
+      )}
+      <Block n={next()} title="Live website preview">
+        <div className="overflow-hidden rounded-lg border border-ink/15 bg-surface">
+          <div className="flex items-center gap-2 border-b border-line px-4 py-2.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-ink/15" />
+            <span className="h-2.5 w-2.5 rounded-full bg-ink/15" />
+            <span className="h-2.5 w-2.5 rounded-full bg-lime ring-1 ring-ink/20" />
+            <span className="ml-3 flex-1 truncate rounded-full bg-soft px-3 py-1 font-mono text-[11px] text-muted">{live ?? "not deployed yet"}</span>
+            {live && (
+              <a href={live} target="_blank" rel="noreferrer" aria-label="Open live site in a new tab" className="text-muted hover:text-ink">
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
           </div>
-          <div className="relative aspect-[16/10]">
+          <div className="relative aspect-[16/10] bg-soft">
             {live && loadPreview ? (
-              <iframe src={live} title={`${p.title} live preview`} className="absolute inset-0 h-full w-full bg-ink" loading="lazy" sandbox="allow-scripts allow-same-origin" />
+              <iframe src={live} title={`${p.title} live preview`} className="absolute inset-0 h-full w-full bg-white" loading="lazy" sandbox="allow-scripts allow-same-origin" />
             ) : (
               <>
                 <Img src={p.thumbnail} alt={`${p.title} preview`} className="absolute inset-0 h-full object-cover" />
@@ -192,11 +243,10 @@ function VibeBody({ p, d, accent }: { p: Project; d: VibeDetails; accent: string
                   <button
                     type="button"
                     onClick={() => setLoadPreview(true)}
-                    data-cursor="Play"
-                    className="absolute inset-0 grid place-items-center bg-ink/50 font-condensed text-3xl tracking-wider transition-colors hover:bg-ink/30"
+                    className="absolute inset-0 grid place-items-center bg-ink/35 transition-colors hover:bg-ink/20"
                   >
-                    <span className="rounded-full px-6 py-3 text-ink" style={{ background: accent }}>
-                      ▶ Load interactive preview
+                    <span className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 font-ui text-sm font-medium text-ink">
+                      <Play className="h-4 w-4" /> Load interactive preview
                     </span>
                   </button>
                 )}
@@ -205,25 +255,11 @@ function VibeBody({ p, d, accent }: { p: Project; d: VibeDetails; accent: string
           </div>
         </div>
       </Block>
-      <Block n="03" title="Creative concept" accent={accent}>
-        <p className="font-grotesk text-xl leading-snug text-bone">{d.concept}</p>
-      </Block>
-      <Block n="04" title="Main features" accent={accent}>
-        <List items={d.features} accent={accent} />
-      </Block>
-      <Block n="05" title="Technologies" accent={accent}>
-        <div className="flex flex-wrap gap-2">
-          {d.technologies.map((t) => (
-            <span key={t} className="rounded-md border border-bone/20 bg-bone/5 px-3 py-1.5 font-mono text-xs">
-              {t}
-            </span>
-          ))}
-        </div>
-      </Block>
     </>
   );
 }
 
+// ── Modal ───────────────────────────────────────────────────────────────────
 export default function ProjectModal({
   project,
   onClose,
@@ -255,21 +291,21 @@ export default function ProjectModal({
       lockScroll(false);
       lastFocus.current?.focus?.();
     };
-  }, [project, onClose, onNavigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [!!project, onClose, onNavigate]);
 
   useEffect(() => {
     scroller.current?.scrollTo({ top: 0 });
   }, [project?.id]);
 
   const cat = project ? getCategory(project.category) : null;
-  const accent = cat?.accent ?? "#19FF32";
 
   return (
     <AnimatePresence>
       {project && cat && (
         <motion.div
           key="modal"
-          className="fixed inset-0 z-[140]"
+          className="fixed inset-0 z-[140] text-ink"
           role="dialog"
           aria-modal="true"
           aria-labelledby="project-title"
@@ -277,27 +313,28 @@ export default function ProjectModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-ink/80 backdrop-blur-sm" onClick={onClose} />
+          <div className="absolute inset-0 bg-ink/50 backdrop-blur-sm" onClick={onClose} />
           <motion.div
             ref={scroller}
             data-lenis-prevent
-            className="absolute inset-x-0 bottom-0 top-4 overflow-y-auto overscroll-contain rounded-t-[1.75rem] border-t border-bone/10 bg-ink md:inset-x-6 md:top-8"
+            className="absolute inset-x-0 bottom-0 top-4 overflow-y-auto overscroll-contain rounded-t-2xl bg-paper md:inset-x-6 md:top-6"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-bone/10 bg-ink/90 px-5 py-3 backdrop-blur md:px-10">
-              <span className="tech-label truncate">
-                <span style={{ color: accent }}>{cat.index}</span> | {cat.title} | {project.type}
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-line bg-paper/90 px-5 py-3 backdrop-blur md:px-10">
+              <span className="label flex min-w-0 items-center gap-2 truncate">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full ring-1 ring-ink/25" style={{ background: cat.accent }} />
+                <span className="text-ink">{cat.index}</span> {cat.title} / {project.type}
               </span>
               <div className="flex items-center gap-2">
                 {onNavigate && (
                   <>
-                    <button type="button" aria-label="Previous project" onClick={() => onNavigate(-1)} className="grid h-10 w-10 place-items-center rounded-full border border-bone/20 hover:bg-bone/10">
+                    <button type="button" aria-label="Previous project" onClick={() => onNavigate(-1)} className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-surface hover:border-ink/40">
                       <ChevronLeft className="h-4 w-4" />
                     </button>
-                    <button type="button" aria-label="Next project" onClick={() => onNavigate(1)} className="grid h-10 w-10 place-items-center rounded-full border border-bone/20 hover:bg-bone/10">
+                    <button type="button" aria-label="Next project" onClick={() => onNavigate(1)} className="grid h-10 w-10 place-items-center rounded-full border border-ink/15 bg-surface hover:border-ink/40">
                       <ChevronRight className="h-4 w-4" />
                     </button>
                   </>
@@ -307,39 +344,38 @@ export default function ProjectModal({
                   type="button"
                   onClick={onClose}
                   aria-label="Close project"
-                  className="grid h-10 w-10 place-items-center rounded-full text-ink transition-transform hover:rotate-90"
-                  style={{ background: accent }}
+                  className="grid h-10 w-10 place-items-center rounded-full bg-ink text-paper transition-transform duration-300 hover:rotate-90"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            <article className="mx-auto max-w-6xl px-5 pb-24 pt-10 md:px-10">
+            <article className="mx-auto max-w-6xl px-5 pb-24 pt-10 md:px-10 md:pt-16">
               <header className="grid gap-8 md:grid-cols-12">
                 <div className="md:col-span-8">
-                  <h2 id="project-title" className="font-display text-[11vw] uppercase leading-[0.9] tracking-tight md:text-7xl">
+                  <h2 id="project-title" className="h-display text-[clamp(2.2rem,6vw,5rem)]">
                     {project.title}
                   </h2>
-                  <p className="mt-5 max-w-2xl text-lg text-bone/80">{project.description}</p>
+                  {project.details.kind !== "graphic-design" && <p className="mt-5 max-w-2xl text-lg text-ink/80">{project.description}</p>}
                 </div>
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 self-end font-mono text-xs uppercase md:col-span-4">
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 self-end md:col-span-4">
                   {[
                     ["Year", String(project.year)],
                     ["Type", project.type],
                     ["Client", project.client],
                     ["Role", project.role],
                   ].map(([k, v]) => (
-                    <div key={k} className="border-t border-bone/15 pt-2">
-                      <dt className="text-muted">{k}</dt>
-                      <dd className="mt-1 text-bone">{v}</dd>
+                    <div key={k} className="border-t border-line pt-2">
+                      <dt className="label">{k}</dt>
+                      <dd className="mt-1 text-sm">{v}</dd>
                     </div>
                   ))}
-                  <div className="col-span-2 border-t border-bone/15 pt-2">
-                    <dt className="text-muted">Tools</dt>
-                    <dd className="mt-1 flex flex-wrap gap-1.5">
+                  <div className="col-span-2 border-t border-line pt-2">
+                    <dt className="label">Tools</dt>
+                    <dd className="mt-2 flex flex-wrap gap-1.5">
                       {project.tools.map((t) => (
-                        <span key={t} className="rounded-full border border-bone/20 px-2 py-0.5 normal-case text-bone">
+                        <span key={t} className="rounded-full border border-ink/15 bg-surface px-2.5 py-0.5 font-mono text-[11px]">
                           {t}
                         </span>
                       ))}
@@ -348,34 +384,41 @@ export default function ProjectModal({
                 </dl>
               </header>
 
-              {project.details.kind !== "graphic-design" && (
-                <figure className="my-10 overflow-hidden rounded-2xl bg-plum">
-                  <Img src={project.thumbnail} alt={`${project.title} hero`} className={project.ratio < 0.7 ? "mx-auto max-h-[70vh] w-auto" : ""} />
+              {project.details.kind === "uiux-design" && (
+                <figure className="grid-paper my-10 overflow-hidden rounded-sm bg-soft p-6 md:p-12">
+                  <Img
+                    src={project.thumbnail}
+                    alt={`${project.title} hero`}
+                    className={cn(
+                      "mx-auto shadow-[0_30px_60px_-24px_rgb(23_25_28/0.45)]",
+                      project.ratio < 0.7 ? "max-h-[64vh] w-auto rounded-[1.6rem] ring-[6px] ring-ink" : "rounded-lg ring-[6px] ring-ink",
+                    )}
+                  />
                 </figure>
               )}
 
-              <div className="mt-6">
-                {project.details.kind === "graphic-design" && <GraphicBody p={project} d={project.details} accent={accent} />}
-                {project.details.kind === "uiux-design" && <UiuxBody p={project} d={project.details} accent={accent} />}
-                {project.details.kind === "vibe-coding" && <VibeBody p={project} d={project.details} accent={accent} />}
+              <div className="mt-10">
+                {project.details.kind === "graphic-design" && <GraphicBody p={project} d={project.details} />}
+                {project.details.kind === "uiux-design" && <UiuxBody p={project} d={project.details} />}
+                {project.details.kind === "web-development" && <WebBody p={project} d={project.details} />}
               </div>
 
               {(project.links?.live || project.links?.github || project.links?.external?.length) && (
-                <div className="mt-8 flex flex-wrap gap-3 border-t border-bone/10 pt-8">
+                <div className="flex flex-wrap gap-3 border-t border-line pt-8">
                   {project.links?.live && (
-                    <a href={project.links.live} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full px-5 py-3 font-bold text-ink" style={{ background: accent }}>
-                      Visit live site <ExternalLink className="h-4 w-4" />
-                    </a>
+                    <Button href={project.links.live} external>
+                      Visit live site
+                    </Button>
                   )}
                   {project.links?.github && (
-                    <a href={project.links.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-bone/30 px-5 py-3 font-bold hover:bg-bone/10">
-                      <GithubIcon className="h-4 w-4" /> Source on GitHub
-                    </a>
+                    <Button href={project.links.github} variant="outline" icon={<GithubIcon className="h-4 w-4" />}>
+                      GitHub repository
+                    </Button>
                   )}
                   {project.links?.external?.map((l) => (
-                    <a key={l.href} href={l.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-bone/30 px-5 py-3 font-bold hover:bg-bone/10">
-                      {l.label} <ArrowUpRight className="h-4 w-4" />
-                    </a>
+                    <Button key={l.href} href={l.href} variant="outline" icon={<ArrowUpRight className="h-4 w-4" />}>
+                      {l.label}
+                    </Button>
                   ))}
                 </div>
               )}

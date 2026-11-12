@@ -10,22 +10,22 @@ const CODE = [
   "import gsap from 'gsap'",
   "",
   "export default function Idea() {",
-  "  const vibe = useVibe({ mode: 'experimental' })",
+  "  const layout = useGrid({ columns: 12 })",
   "  useEffect(() => {",
   "    gsap.to('.title', { y: 0, stagger: 0.04 })",
   "  }, [])",
   "  return (",
   "    <Canvas dpr={[1, 2]}>",
-  "      <SprayCan color=\"#19FF32\" />",
-  "      <Gallery walls={3} frames={9} />",
+  "      <Gimbal rings={3} accent=\"#C5F36A\" />",
+  "      <Exhibition frames={9} />",
   "    </Canvas>",
   "  )",
   "}",
   "",
-  "// ship it ✦",
+  "// design → build → ship",
   "> npm run build",
   "✓ Compiled successfully",
-  "✓ Generating static pages (5/5)",
+  "✓ Generating static pages (7/7)",
   "> deploying… done in 14s",
 ];
 
@@ -50,9 +50,9 @@ function useCodeTexture() {
     s.chars += 2;
     const total = CODE.join("\n").length;
     if (s.chars > total + 120) s.chars = 0;
-    ctx.fillStyle = "#0b0918";
+    ctx.fillStyle = "#14171A";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#16122a";
+    ctx.fillStyle = "#1E2226";
     ctx.fillRect(0, 0, canvas.width, 44);
     ["#ff5f57", "#febc2e", "#28c840"].forEach((c, i) => {
       ctx.fillStyle = c;
@@ -60,7 +60,7 @@ function useCodeTexture() {
       ctx.arc(26 + i * 24, 22, 7, 0, Math.PI * 2);
       ctx.fill();
     });
-    ctx.fillStyle = "#a9a3bd";
+    ctx.fillStyle = "#8A9096";
     ctx.font = "20px monospace";
     ctx.fillText("~/idea/app/page.tsx", 120, 29);
     ctx.font = "24px monospace";
@@ -70,20 +70,20 @@ function useCodeTexture() {
       const vis = line.slice(0, remaining);
       remaining -= line.length + 1;
       const y = 84 + i * 26.5;
-      ctx.fillStyle = "#4b4466";
+      ctx.fillStyle = "#4A4F55";
       ctx.fillText(String(i + 1).padStart(2, " "), 16, y);
       ctx.fillStyle = line.startsWith("✓")
-        ? COLORS.acid
+        ? COLORS.lime
         : line.startsWith(">")
-          ? COLORS.lemon
+          ? "#E6EAE0"
           : line.startsWith("//")
-            ? "#7d7697"
+            ? "#747A80"
             : line.includes("import") || line.includes("export") || line.includes("return")
-              ? COLORS.violet
-              : COLORS.bone;
+              ? COLORS.sky
+              : COLORS.paper;
       ctx.fillText(vis, 64, y);
       if (remaining <= 0 && Math.floor(t * 2) % 2 === 0) {
-        ctx.fillStyle = COLORS.acid;
+        ctx.fillStyle = COLORS.lime;
         ctx.fillRect(64 + ctx.measureText(vis).width + 2, y - 20, 12, 24);
       }
     });
@@ -106,7 +106,7 @@ function Monitor() {
   return (
     <group ref={g} scale={size.width < 768 ? 0.7 : 1}>
       <RoundedBox args={[w + 0.2, h + 0.2, 0.14]} radius={0.08}>
-        <meshStandardMaterial color="#15121f" metalness={0.7} roughness={0.3} />
+        <meshStandardMaterial color="#17191C" metalness={0.7} roughness={0.3} />
       </RoundedBox>
       <mesh position-z={0.072}>
         <planeGeometry args={[w, h]} />
@@ -123,25 +123,25 @@ function Monitor() {
       {/* floating UI chips */}
       <Float speed={2} floatIntensity={1.4}>
         <RoundedBox args={[0.9, 0.36, 0.06]} radius={0.15} position={[-2.3, 0.9, 0.5]}>
-          <meshStandardMaterial color={COLORS.acid} />
+          <meshStandardMaterial color={COLORS.lime} roughness={0.35} />
         </RoundedBox>
       </Float>
       <Float speed={1.6} floatIntensity={1.2}>
         <RoundedBox args={[0.6, 0.6, 0.06]} radius={0.1} position={[2.3, -0.6, 0.6]}>
-          <meshStandardMaterial color={COLORS.lemon} />
+          <meshStandardMaterial color={COLORS.paper} roughness={0.35} />
         </RoundedBox>
       </Float>
       <Float speed={1.3} floatIntensity={1.6}>
         <mesh position={[2.1, 1.1, 0.2]}>
           <torusGeometry args={[0.24, 0.08, 16, 48]} />
-          <meshStandardMaterial color={COLORS.violet} />
+          <meshStandardMaterial color={COLORS.sky} roughness={0.3} />
         </mesh>
       </Float>
     </group>
   );
 }
 
-/** Vibe-coding hero: a 3D monitor live-typing code. */
+/** Web-development hero: a 3D monitor live-typing code. */
 export default function MonitorScene({ active, eventSource }: { active: boolean; eventSource?: React.RefObject<HTMLElement | null> }) {
   return (
     <SceneCanvas
@@ -152,9 +152,9 @@ export default function MonitorScene({ active, eventSource }: { active: boolean;
     >
       <ambientLight intensity={0.6} />
       <directionalLight position={[3, 3, 5]} intensity={1.6} />
-      <pointLight position={[-3, 1, 3]} intensity={12} color={COLORS.acid} />
+      <pointLight position={[-3, 1, 3]} intensity={8} color={COLORS.sky} />
       <Monitor />
-      <Studio intensity={0.7} />
+      <Studio intensity={0.8} />
     </SceneCanvas>
   );
 }

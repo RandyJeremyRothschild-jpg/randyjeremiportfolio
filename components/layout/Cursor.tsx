@@ -2,9 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Custom cursor: a small acid dot + a lagging ring. Elements can set
- * data-cursor="View" (or any label) to morph the ring into a labelled blob.
- * Only active for fine pointers and when motion is allowed.
+ * Custom cursor: a small dot + a lagging ring that inverts against whatever is
+ * behind it. Elements can set data-cursor="View" (or any label) to morph the
+ * ring into a labelled lime pill. Only active for fine pointers with motion allowed.
  */
 export default function Cursor() {
   const dot = useRef<HTMLDivElement>(null);
@@ -35,7 +35,7 @@ export default function Cursor() {
       }
       const t = (e.target as HTMLElement | null)?.closest<HTMLElement>("a,button,[data-cursor],input,textarea,label,select");
       setHover(!!t && !t.matches("input,textarea"));
-      setLabel(t?.dataset.cursor ?? null);
+      setLabel(t?.dataset.cursor ?? document.documentElement.dataset.cursor ?? null);
     };
     const leave = () => {
       visible = false;
@@ -43,8 +43,8 @@ export default function Cursor() {
       if (ring.current) ring.current.style.opacity = "0";
     };
     const loop = () => {
-      rx += (x - rx) * 0.18;
-      ry += (y - ry) * 0.18;
+      rx += (x - rx) * 0.2;
+      ry += (y - ry) * 0.2;
       if (dot.current) dot.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       if (ring.current) ring.current.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
       raf = requestAnimationFrame(loop);
@@ -69,24 +69,27 @@ export default function Cursor() {
 
   if (!enabled) return null;
 
-  const size = label ? 92 : hover ? 54 : 34;
+  const size = (hover ? 44 : 28) * (down ? 0.85 : 1);
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-[150]">
-      <div ref={ring} className="absolute left-0 top-0 opacity-0" style={{ willChange: "transform" }}>
-        <div
-          className="flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-condensed text-lg tracking-wider text-acid transition-[width,height,background-color,border-color] duration-300 ease-[var(--ease-expo)]"
-          style={{
-            width: size * (down ? 0.85 : 1),
-            height: size * (down ? 0.85 : 1),
-            background: label ? "var(--color-ink)" : hover ? "rgb(25 255 50 / 0.12)" : "transparent",
-            border: label ? "1.5px solid var(--color-acid)" : "1.5px solid rgb(245 243 239 / 0.6)",
-          }}
-        >
-          {label}
-        </div>
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-[400] print:hidden">
+      <div
+        ref={ring}
+        className="absolute left-0 top-0 opacity-0"
+        style={{ willChange: "transform", mixBlendMode: label ? "normal" : "difference" }}
+      >
+        {label ? (
+          <div className="-translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-lime px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.1em] text-ink shadow-[0_6px_24px_rgb(23_25_28/0.18)]">
+            {label}
+          </div>
+        ) : (
+          <div
+            className="-translate-x-1/2 -translate-y-1/2 rounded-full border border-white/80 transition-[width,height,background-color] duration-300 ease-[var(--ease-expo)]"
+            style={{ width: size, height: size, background: hover ? "rgb(255 255 255 / 0.18)" : "transparent" }}
+          />
+        )}
       </div>
       <div ref={dot} className="absolute left-0 top-0 opacity-0 mix-blend-difference">
-        <div className="h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-acid" style={{ opacity: label ? 0 : 1 }} />
+        <div className="h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" style={{ opacity: label ? 0 : 1 }} />
       </div>
     </div>
   );

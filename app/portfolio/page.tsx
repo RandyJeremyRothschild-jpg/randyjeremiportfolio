@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
-import ArchiveHero from "@/components/portfolio/ArchiveHero";
-import CategoryPanels from "@/components/portfolio/CategoryPanels";
-import ProjectArchive from "@/components/portfolio/ProjectArchive";
+import PortfolioOverview from "@/components/portfolio/PortfolioOverview";
 
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Selected works and creative archive — graphic design, UI/UX design and creative development.",
+  title: "Work",
+  description: "An archive of ideas and executions — graphic design, UI/UX design and web development.",
 };
 
 export default function PortfolioPage() {
-  return (
-    <>
-      <ArchiveHero />
-      <CategoryPanels />
-      <ProjectArchive />
-    </>
-  );
+  return <PortfolioOverview />;
 }

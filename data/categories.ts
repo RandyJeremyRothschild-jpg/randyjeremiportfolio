@@ -7,12 +7,13 @@ export interface CategoryInfo {
   shortTitle: string;
   href: string;
   tagline: string;
+  /** Short description used on the homepage + portfolio overview. */
   description: string;
+  /** Longer intro for the category page. */
+  intro: string;
   services: string[];
-  /** Accent color used for the category's visual identity. */
+  /** Small accent used for indicators on this category. */
   accent: string;
-  /** Text color that sits on the accent. */
-  onAccent: string;
 }
 
 export const categories: CategoryInfo[] = [
@@ -22,21 +23,21 @@ export const categories: CategoryInfo[] = [
     title: "Graphic Design",
     shortTitle: "Graphic",
     href: "/portfolio/graphic-design",
-    tagline: "Identity, posters, packaging & art direction.",
+    tagline: "Identity, campaigns, posters & art direction.",
     description:
-      "Visual identities, branding, art direction, promotional materials, and digital graphics.",
+      "Creating visual identities, branding systems, promotional materials, and meaningful visual communication.",
+    intro:
+      "Visual identities, brand systems and promotional work — designed to communicate clearly and to be remembered.",
     services: [
       "Brand Identity",
       "Logo Design",
       "Social Media Design",
       "Advertising Campaigns",
-      "Promotional Materials",
-      "Packaging Design",
       "Poster Design",
+      "Packaging Design",
       "Art Direction",
     ],
-    accent: "#19FF32",
-    onAccent: "#080711",
+    accent: "#C5F36A",
   },
   {
     slug: "uiux-design",
@@ -44,41 +45,40 @@ export const categories: CategoryInfo[] = [
     title: "UI/UX Design",
     shortTitle: "UI/UX",
     href: "/portfolio/uiux-design",
-    tagline: "Products, interfaces & systems people enjoy using.",
+    tagline: "Interfaces, products & systems people enjoy using.",
     description:
-      "User-centered interfaces, digital products, wireframes, prototypes, and interactive experiences.",
+      "Designing intuitive digital interfaces and user-centered experiences through research, structure, and visual design.",
+    intro:
+      "Digital products shaped from the user outwards — research, flows and wireframes first, then interfaces with character.",
     services: [
-      "Website UI Design",
-      "Mobile App Design",
+      "Website UI",
+      "Mobile Applications",
       "Dashboard Design",
-      "UX Research",
+      "User Experience Design",
       "Design Systems",
-      "Prototyping",
+      "Interactive Prototypes",
     ],
-    accent: "#9B5CFF",
-    onAccent: "#F5F3EF",
+    accent: "#A9BFFF",
   },
   {
-    slug: "vibe-coding",
+    slug: "web-development",
     index: "03",
-    title: "Website & Creative Development",
-    shortTitle: "Vibe Coding",
-    href: "/portfolio/vibe-coding",
-    tagline: "Ideas shipped as living, breathing websites.",
-    description:
-      "Transforming creative ideas into functional websites and digital experiences using modern development tools and AI-assisted workflows.",
+    title: "Web Development",
+    shortTitle: "Web Dev",
+    href: "/portfolio/web-development",
+    tagline: "Design concepts shipped as living websites.",
+    description: "Turning design concepts into functional, responsive, and interactive websites.",
+    intro:
+      "Websites and interactive experiments built end-to-end — from layout and motion to responsive, working code.",
     services: [
       "Personal Websites",
       "Landing Pages",
       "Interactive Websites",
-      "Experimental Web",
-      "Creative Coding",
       "Web Applications",
+      "Experimental Digital Experiences",
     ],
-    accent: "#E8FF2A",
-    onAccent: "#080711",
+    accent: "#C9CDD2",
   },
 ];
 
-export const getCategory = (slug: CategorySlug) =>
-  categories.find((c) => c.slug === slug)!;
+export const getCategory = (slug: CategorySlug) => categories.find((c) => c.slug === slug)!;

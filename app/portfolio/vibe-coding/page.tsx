@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import VibeCodingView from "@/components/categories/VibeCodingView";
+import LegacyRedirect from "@/components/layout/LegacyRedirect";
 
 export const metadata: Metadata = {
-  title: "Vibe Coding — Creative Development",
-  description: "Websites, landing pages, interactive experiences and creative coding projects.",
+  title: "Web Development",
+  robots: { index: false },
 };
 
+/** Old route kept so existing links still work: forwards to /portfolio/web-development. */
 export default function Page() {
-  return <VibeCodingView />;
+  return <LegacyRedirect to="/portfolio/web-development" label="Web Development" />;
 }

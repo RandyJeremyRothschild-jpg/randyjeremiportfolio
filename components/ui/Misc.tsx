@@ -1,12 +1,22 @@
 import Image from "next/image";
 import { cn, isSvg } from "@/lib/utils";
 
-/** "| About |" style technical label used across sections. */
-export function SectionLabel({ children, className, index }: { children: React.ReactNode; className?: string; index?: string }) {
+/** Small technical section label: "● 01 —— About". */
+export function SectionLabel({
+  children,
+  className,
+  index,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  index?: string;
+}) {
   return (
-    <div className={cn("tech-label flex items-center gap-3", className)}>
-      {index && <span className="text-acid">{index}</span>}
-      <span>| {children} |</span>
+    <div className={cn("label flex items-center gap-3", className)}>
+      <span className="h-1.5 w-1.5 rounded-full bg-lime ring-1 ring-ink/25" aria-hidden />
+      {index && <span>{index}</span>}
+      <span className="h-px w-8 bg-current opacity-40" aria-hidden />
+      <span>{children}</span>
     </div>
   );
 }
@@ -72,10 +82,10 @@ export function SmartImage({
   );
 }
 
-/** Coordinates / metadata strip for the "technical label" vibe. */
-export function Coords({ className, items }: { className?: string; items: string[] }) {
+/** Row of small monospaced metadata items. */
+export function Meta({ className, items }: { className?: string; items: string[] }) {
   return (
-    <div className={cn("tech-label flex flex-wrap gap-x-6 gap-y-1", className)} aria-hidden>
+    <div className={cn("label flex flex-wrap gap-x-6 gap-y-1", className)}>
       {items.map((t) => (
         <span key={t}>{t}</span>
       ))}

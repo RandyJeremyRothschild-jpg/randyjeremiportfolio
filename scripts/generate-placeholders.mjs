@@ -7,19 +7,19 @@ import path from "node:path";
 
 const OUT = path.resolve("public/images/projects");
 const C = {
-  ink: "#080711",
-  plum: "#17102D",
-  plum2: "#241848",
-  acid: "#19FF32",
-  bone: "#F5F3EF",
-  violet: "#9B5CFF",
-  lemon: "#E8FF2A",
-  pink: "#FF3FA4",
-  cyan: "#2DE2E6",
-  orange: "#FF6B1A",
-  chrome: "#C9CCD6",
+  ink: "#17191C",
+  plum: "#22262B",
+  plum2: "#2E3338",
+  acid: "#C5F36A",
+  bone: "#F5F6F3",
+  violet: "#A9BFFF",
+  lemon: "#E6EAE0",
+  pink: "#C9CDD2",
+  cyan: "#8FA6F0",
+  orange: "#A9BFFF",
+  chrome: "#C9CDD2",
 };
-const DISPLAY = "Impact, 'Arial Black', 'Helvetica Neue', sans-serif";
+const DISPLAY = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 const SANS = "'Helvetica Neue', Arial, sans-serif";
 const MONO = "Consolas, 'Courier New', monospace";
 
@@ -38,24 +38,15 @@ const defs = (id) => `<defs>
 </defs>`;
 const grain = (id, w, h) => `<rect width="${w}" height="${h}" filter="url(#grain${id})"/>`;
 
+/** Technical ring / crosshair mark (decorative). */
 function splat(r, cx, cy, size, color) {
-  let s = `<g fill="${color}">`;
-  s += `<circle cx="${cx}" cy="${cy}" r="${size}"/>`;
-  const n = 10 + Math.floor(r() * 14);
-  for (let i = 0; i < n; i++) {
-    const a = r() * Math.PI * 2;
-    const d = size * (0.8 + r() * 1.8);
-    const rr = size * (0.06 + r() * 0.22);
-    s += `<circle cx="${(cx + Math.cos(a) * d).toFixed(1)}" cy="${(cy + Math.sin(a) * d).toFixed(1)}" r="${rr.toFixed(1)}"/>`;
-  }
-  for (let i = 0; i < 3; i++) {
-    const x = cx - size * 0.6 + r() * size * 1.2;
-    const len = size * (0.6 + r() * 2.2);
-    const wdt = size * (0.08 + r() * 0.12);
-    s += `<rect x="${x.toFixed(1)}" y="${cy}" width="${wdt.toFixed(1)}" height="${len.toFixed(1)}" rx="${(wdt / 2).toFixed(1)}"/>`;
-    s += `<circle cx="${(x + wdt / 2).toFixed(1)}" cy="${(cy + len).toFixed(1)}" r="${(wdt * 0.85).toFixed(1)}"/>`;
-  }
-  return s + "</g>";
+  const R = size * (1.4 + r() * 0.8);
+  let s = `<g fill="none" stroke="${color}" stroke-width="${Math.max(2, size * 0.06).toFixed(1)}">`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${R.toFixed(1)}"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${(R * 0.55).toFixed(1)}" stroke-dasharray="4 8"/>`;
+  s += `<line x1="${cx - R * 1.3}" y1="${cy}" x2="${cx + R * 1.3}" y2="${cy}"/>`;
+  s += `<line x1="${cx}" y1="${cy - R * 1.3}" x2="${cx}" y2="${cy + R * 1.3}"/>`;
+  return s + `</g><circle cx="${cx}" cy="${cy}" r="${(size * 0.22).toFixed(1)}" fill="${color}"/>`;
 }
 
 // ───────────────────────── Graphic design ─────────────────────────
@@ -68,9 +59,9 @@ function poster({ w = 900, h = 1200, seed, title, sub, bg, fg, accent, id }) {
   b += splat(r, w * (0.15 + r() * 0.7), h * (0.15 + r() * 0.2), w * 0.06, pick(r, [C.pink, C.lemon, C.cyan, C.violet]));
   b += splat(r, w * (0.2 + r() * 0.6), h * 0.72, w * 0.05, accent);
   const words = title.toUpperCase().split(" ");
-  const fs1 = Math.min(w / (Math.max(...words.map((x) => x.length)) * 0.58), 230);
+  const fs1 = Math.min(w / (Math.max(...words.map((x) => x.length)) * 0.74), 200);
   words.forEach((word, i) => {
-    b += `<text x="${w * 0.07}" y="${h * 0.78 + i * fs1 * 0.92 - (words.length - 1) * fs1 * 0.5}" font-family="${DISPLAY}" font-size="${fs1}" fill="${fg}" letter-spacing="-2">${esc(word)}</text>`;
+    b += `<text x="${w * 0.07}" y="${h * 0.78 + i * fs1 * 0.92 - (words.length - 1) * fs1 * 0.5}" font-family="${DISPLAY}" font-size="${fs1}" fill="${fg}" letter-spacing="-6" font-weight="500">${esc(word)}</text>`;
   });
   b += `<text x="${w * 0.07}" y="${h * 0.08}" font-family="${MONO}" font-size="22" fill="${fg}">${esc(sub.toUpperCase())}</text>`;
   b += `<text x="${w * 0.93}" y="${h * 0.08}" text-anchor="end" font-family="${MONO}" font-size="22" fill="${fg}">№ ${String(seed % 100).padStart(3, "0")}</text>`;
@@ -153,7 +144,7 @@ function packaging({ w = 1200, h = 900, seed, name, bg, colors, id }) {
 // ───────────────────────── UI / UX ─────────────────────────
 function phone({ w = 390, h = 844, seed, title, accent, dark = true, id, variant = 0 }) {
   const r = rng(seed);
-  const bg = dark ? C.ink : C.bone, fg = dark ? C.bone : C.ink, card = dark ? "#16132a" : "#ffffff";
+  const bg = dark ? C.ink : C.bone, fg = dark ? C.bone : C.ink, card = dark ? "#22262B" : "#ffffff";
   let b = defs(id) + `<rect width="${w}" height="${h}" fill="${bg}"/>`;
   b += `<text x="24" y="34" font-family="${SANS}" font-size="15" font-weight="700" fill="${fg}">9:41</text>`;
   b += `<rect x="${w - 64}" y="22" width="36" height="14" rx="4" fill="none" stroke="${fg}"/>`;
@@ -187,34 +178,34 @@ function desktop({ w = 1440, h = 900, seed, title, accent, id, kind = "dashboard
   const r = rng(seed);
   let b = defs(id) + `<rect width="${w}" height="${h}" fill="${C.ink}"/>`;
   if (kind === "dashboard") {
-    b += `<rect width="240" height="${h}" fill="#110d22"/>`;
+    b += `<rect width="240" height="${h}" fill="#1E2126"/>`;
     b += `<text x="32" y="58" font-family="${DISPLAY}" font-size="30" fill="${accent}">${esc(title.toUpperCase())}</text>`;
     for (let i = 0; i < 7; i++) b += `<rect x="32" y="${110 + i * 48}" width="${120 + r() * 50}" height="14" rx="7" fill="${C.bone}" opacity="${i === 1 ? 0.95 : 0.3}"/>`;
     for (let i = 0; i < 4; i++) {
       const x = 280 + i * 284;
-      b += `<rect x="${x}" y="40" width="264" height="140" rx="20" fill="#16132a"/>`;
+      b += `<rect x="${x}" y="40" width="264" height="140" rx="20" fill="#22262B"/>`;
       b += `<text x="${x + 24}" y="86" font-family="${SANS}" font-size="16" fill="${C.bone}" opacity=".6">Metric ${i + 1}</text>`;
       b += `<text x="${x + 24}" y="148" font-family="${DISPLAY}" font-size="48" fill="${i === 0 ? accent : C.bone}">${Math.floor(r() * 900 + 100)}</text>`;
     }
-    b += `<rect x="280" y="210" width="740" height="420" rx="24" fill="#16132a"/>`;
+    b += `<rect x="280" y="210" width="740" height="420" rx="24" fill="#22262B"/>`;
     for (let i = 0; i < 14; i++) {
       const bh = 60 + r() * 280;
       b += `<rect x="${316 + i * 50}" y="${600 - bh}" width="30" height="${bh}" rx="8" fill="${i % 4 === 0 ? accent : C.violet}" opacity="${i % 4 === 0 ? 1 : 0.6}"/>`;
     }
-    b += `<rect x="1050" y="210" width="350" height="640" rx="24" fill="#16132a"/>`;
+    b += `<rect x="1050" y="210" width="350" height="640" rx="24" fill="#22262B"/>`;
     for (let i = 0; i < 7; i++) {
       b += `<circle cx="1094" cy="${270 + i * 80}" r="20" fill="${pick(r, [accent, C.violet, C.lemon, C.pink])}"/>`;
       b += `<rect x="1128" y="${262 + i * 80}" width="${140 + r() * 80}" height="14" rx="7" fill="${C.bone}" opacity=".6"/>`;
     }
     b += `<rect x="280" y="660" width="740" height="190" rx="24" fill="${accent}"/>`;
-    b += `<text x="316" y="770" font-family="${DISPLAY}" font-size="64" fill="${C.ink}">KEEP CREATING.</text>`;
+    b += `<text x="316" y="770" font-family="${DISPLAY}" font-size="64" fill="${C.ink}">Keep creating.</text>`;
   } else {
     b += `<rect width="${w}" height="${h}" fill="${kind === "light" ? C.bone : C.ink}"/>`;
     const fg = kind === "light" ? C.ink : C.bone;
     b += `<text x="60" y="70" font-family="${DISPLAY}" font-size="28" fill="${fg}">${esc(title.toUpperCase())}</text>`;
     for (let i = 0; i < 4; i++) b += `<rect x="${860 + i * 120}" y="56" width="80" height="12" rx="6" fill="${fg}" opacity=".5"/>`;
-    b += `<text x="60" y="330" font-family="${DISPLAY}" font-size="190" fill="${fg}" letter-spacing="-6">${esc(pick(r, ["MAKE IT", "ART IN", "THE NEW"]))}</text>`;
-    b += `<text x="60" y="510" font-family="${DISPLAY}" font-size="190" fill="${accent}" letter-spacing="-6">${esc(pick(r, ["LOUD.", "MOTION", "WAVE."]))}</text>`;
+    b += `<text x="60" y="330" font-family="${DISPLAY}" font-size="170" fill="${fg}" letter-spacing="-8">${esc(pick(r, ["Make it", "Art in", "The new"]))}</text>`;
+    b += `<text x="60" y="510" font-family="${DISPLAY}" font-size="170" fill="${accent}" letter-spacing="-8">${esc(pick(r, ["clear.", "motion", "wave."]))}</text>`;
     b += `<rect x="60" y="580" width="220" height="64" rx="32" fill="${accent}"/>`;
     b += `<text x="170" y="620" text-anchor="middle" font-family="${SANS}" font-weight="700" font-size="18" fill="${C.ink}">GET STARTED →</text>`;
     for (let i = 0; i < 3; i++) b += `<rect x="${60 + i * 450}" y="690" width="420" height="260" rx="18" fill="${pick(r, [C.violet, C.plum2, C.lemon, C.pink])}"/>`;
@@ -257,7 +248,7 @@ function codeShot({ w = 1440, h = 900, seed, title, accent, id }) {
     for (let i = 1; i <= 8; i++) d += ` Q ${i * 190 - 95} ${h * r()} ${i * 190} ${h * (0.2 + r() * 0.6)}`;
     b += `<path d="${d}" fill="none" stroke="${pick(r, [accent, C.violet, C.lemon, C.cyan])}" stroke-width="${2 + r() * 10}" stroke-linecap="round" opacity="${0.4 + r() * 0.6}"/>`;
   }
-  b += `<rect x="60" y="${h - 250}" width="${title.length * 52 + 80}" height="120" fill="${C.ink}"/>`;
+  b += `<rect x="60" y="${h - 250}" width="${title.length * 66 + 80}" height="120" fill="${C.ink}"/>`;
   b += `<text x="100" y="${h - 165}" font-family="${DISPLAY}" font-size="88" fill="${C.bone}">${esc(title.toUpperCase())}</text>`;
   b += `<text x="60" y="${h - 90}" font-family="${MONO}" font-size="22" fill="${accent}">&gt; npm run dev — ready on localhost:3000_</text>`;
   return svg(w, h, b);

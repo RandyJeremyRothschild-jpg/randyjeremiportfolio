@@ -1,4 +1,4 @@
-export type CategorySlug = "graphic-design" | "uiux-design" | "vibe-coding";
+export type CategorySlug = "graphic-design" | "uiux-design" | "web-development";
 
 export interface ProjectLinks {
   /** Live website (or self-hosted demo under /public/demos). */
@@ -35,15 +35,17 @@ export interface UiuxDetails {
   results: string[];
 }
 
-export interface VibeDetails {
-  kind: "vibe-coding";
+export interface WebDetails {
+  kind: "web-development";
   overview: string;
   concept: string;
   features: string[];
   technologies: string[];
+  /** Optional development-process steps (shown when present). */
+  process?: string[];
 }
 
-export type ProjectDetails = GraphicDetails | UiuxDetails | VibeDetails;
+export type ProjectDetails = GraphicDetails | UiuxDetails | WebDetails;
 
 export interface Project {
   id: string;
